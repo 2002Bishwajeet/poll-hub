@@ -3,8 +3,12 @@
 	import Option from '../components/option.svelte';
 	import Header from '../layout/header.svelte';
 	import type option from '../models/option';
+	import type SDK from '../sdk/sdk';
+	import MockSDK from '../sdk/mock/mockSdk';
 
 	let options: option[] = [];
+
+	let sdk: SDK = MockSDK;
 
 	let showModal = false;
 </script>

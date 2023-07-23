@@ -1,7 +1,19 @@
 import type { User } from "../../models/userModel";
 import { AuthenticationBase } from "../authenticationBase";
 
-class AuthenticationMock extends AuthenticationBase {
+export class AuthenticationMock extends AuthenticationBase {
+    public getCurrentUser(): User {
+        const session = document.cookie.split(";").find((item) => item.startsWith("session="));
+        if (session) {
+            const id = session.split("=")[1];
+            return {
+                id: id,
+                name: "John Doe",
+                email: "johndoe@example.com",
+            };
+        }
+        return null;
+    }
     public async login(email: string, password: string): Promise<User> {
         document.cookie = "session=abc";
         return Promise.resolve({

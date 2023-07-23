@@ -5,13 +5,25 @@
 	import InputEmail from '../elements/form/inputEmail.svelte';
 	import InputPassword from '../elements/form/inputPassword.svelte';
 	import InputText from '../elements/form/inputText.svelte';
+	import type { AuthenticationBase } from '../sdk/authenticationBase';
 	import { addNotification } from '../store/notification';
 	import { colors } from '../utils/colors';
+	import mockSdk from '../sdk/mock/mockSdk';
+	import { replace } from 'svelte-spa-router';
+
 	let name: string, mail: string, pass: string;
+
+	let authentication: AuthenticationBase = mockSdk.Authentication;
 
 	async function register() {
 		try {
-			throw new Error('Not implemented');
+			await authentication.signUp(name, mail, pass);
+			addNotification({
+				type: 'success',
+				message: 'SignUp successful'
+			});
+			await authentication.login(mail, pass);
+			replace('/home');
 		} catch (error) {
 			addNotification({
 				type: 'error',

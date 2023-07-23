@@ -8,4 +8,5 @@ export abstract class AuthenticationBase {
     public abstract loginWithGithub() : void;
     public abstract signInAnonymously() : Promise<User>;
     public abstract recoverPassword(email: string);
+    public abstract getCurrentUser() : User;
 }

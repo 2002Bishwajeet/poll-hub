@@ -6,10 +6,21 @@
 	import InputEmail from '../elements/form/inputEmail.svelte';
 	import InputPassword from '../elements/form/inputPassword.svelte';
 	import { addNotification } from '../store/notification';
+	import type { AuthenticationBase } from '../sdk/authenticationBase';
+	import mockSdk from '../sdk/mock/mockSdk';
+	import { replace } from 'svelte-spa-router';
 	let mail: string, pass: string;
 
-	function login() {
+	let authentication: AuthenticationBase = mockSdk.Authentication;
+
+	async function login() {
 		try {
+			await authentication.login(mail, pass);
+			addNotification({
+				type: 'success',
+				message: 'SignIn successful'
+			});
+			replace('/home');
 		} catch (error) {
 			addNotification({
 				type: 'error',
