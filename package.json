@@ -1,0 +1,37 @@
+{
+	"name": "poll-hub",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint .",
+		"format": "prettier --write  --plugin prettier-plugin-svelte .",
+		"test": "vitest",
+		"coverage": "vitest run --coverage"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "^2.0.3",
+		"@tsconfig/svelte": "^4.0.1",
+		"prettier": "2.8.8",
+		"prettier-plugin-svelte": "^2.10.1",
+		"svelte": "^3.57.0",
+		"svelte-check": "^2.10.3",
+		"svelte-preprocess": "^5.0.4",
+		"tslib": "^2.5.0",
+		"typescript": "^5.0.2",
+		"vite": "^4.3.2",
+		"vitest": "^0.33.0"
+	},
+	"dependencies": {
+		"@appwrite.io/pink": "^0.0.6",
+		"appwrite": "^11.0.0",
+		"chart.js": "^4.3.0",
+		"page": "^1.11.6",
+		"sass": "^1.62.1",
+		"svelte-spa-router": "^3.3.0"
+	}
+}
