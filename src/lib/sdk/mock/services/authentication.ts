@@ -1,5 +1,5 @@
-import type { User } from "../../models/userModel";
-import { AuthenticationBase } from "../authenticationBase";
+import type { User } from "../../../models/userModel";
+import { AuthenticationBase } from "../../authenticationBase";
 
 export class AuthenticationMock extends AuthenticationBase {
     public getCurrentUser(): User {

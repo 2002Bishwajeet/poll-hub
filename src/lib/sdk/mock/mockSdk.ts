@@ -1,6 +1,6 @@
 import type SDK from "../sdk";
-import { AuthenticationMock } from "./authentication";
-import { DatabaseMock } from "./database";
+import { AuthenticationMock } from "./services/authentication";
+import { DatabaseMock } from "./services/database";
 
 class MockSDK implements SDK {
 
