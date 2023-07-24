@@ -20,7 +20,7 @@
 				type: 'success',
 				message: 'SignIn successful'
 			});
-			replace('/#/home');
+			replace('/home');
 		} catch (error) {
 			addNotification({
 				type: 'error',
@@ -48,7 +48,6 @@
 	function signInWithGithub() {
 		try {
 			authentication.loginWithGithub();
-
 		} catch (err) {
 			addNotification({
 				type: 'error',
@@ -60,7 +59,6 @@
 	function signInWithDiscord() {
 		try {
 			authentication.loginWithDiscord();
-
 		} catch (err) {
 			addNotification({
 				type: 'error',
@@ -79,7 +77,7 @@
 
 	<div class="box u-stretch">
 		<h1 class="heading-level-2 u-text-center">Sign In</h1>
-		<form class="form u-margin-block-start-24" on:submit={login}>
+		<form class="form u-margin-block-start-24" on:submit|preventDefault={login}>
 			<FormList>
 				<InputEmail
 					id="email"

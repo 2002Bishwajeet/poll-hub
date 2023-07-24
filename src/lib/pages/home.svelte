@@ -1,21 +1,43 @@
 <script lang="ts">
 	import { pollOptions, type Option } from './../store/pollOptions';
 	import Modal from '../components/modal.svelte';
-
 	import Header from '../layout/header.svelte';
-
-	import type SDK from '../sdk/sdk';
-
 	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
 	import OptionCard from '../components/optionCard.svelte';
+	import type { DatabaseBase } from '../sdk/databaseBase';
+	import type { Poll } from '../models/poll';
+	import { addNotification } from '../store/notification';
 
 	let options: Option[];
+	let question: string;
 
 	$: pollOptions.subscribe((value) => {
 		options = value;
 	});
 
-	let sdk: SDK = appwriteSdk;
+	let database: DatabaseBase = appwriteSdk.Database;
+
+	async function createPoll() {
+		if (!question || !options) {
+			addNotification({
+				type: 'error',
+				message: 'Please enter a question and at least one option'
+			});
+		}
+		let poll: Poll = {
+			id: '',
+			question: question,
+			options: options
+		};
+		try {
+			const response = await database.createPoll(poll);
+		} catch (error) {
+			addNotification({
+				type: 'error',
+				message: error.message
+			});
+		}
+	}
 
 	let showModal = false;
 </script>
@@ -30,9 +52,10 @@
 					type="text"
 					placeholder="Enter your Question"
 					style="border-radius: 15;"
+					bind:value={question}
 				/>
 			</div>
-			<button class="button">Create</button>
+			<button class="button" on:click={createPoll}>Create</button>
 		</div>
 		<button class="button is-secondary" on:click={() => (showModal = true)}>
 			<span class="icon-plus" aria-hidden="true" />

@@ -64,7 +64,7 @@
 
 	<div class="box u-stretch">
 		<h1 class="heading-level-2 u-text-center">Sign Up</h1>
-		<form class="form u-margin-block-start-24" on:submit={register}>
+		<form class="form u-margin-block-start-24" on:submit|preventDefault={register}>
 			<FormList>
 				<InputText
 					id="name"

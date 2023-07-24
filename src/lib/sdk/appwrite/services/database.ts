@@ -1,6 +1,7 @@
 import { Databases, Functions, type Client } from "appwrite";
 import type { Poll } from "../../../models/poll";
 import type { DatabaseBase } from "../../databaseBase";
+import { VARS } from "../../../system";
 
 export default class AppwriteDatabase implements DatabaseBase {
 
@@ -13,8 +14,15 @@ export default class AppwriteDatabase implements DatabaseBase {
     }
 
 
-    public createPoll(poll: Poll) {
-        throw new Error("Method not implemented.");
+    public async createPoll(poll: Omit<Poll, 'id'>) : Promise<Poll> {
+        const response = await this.function.createExecution(VARS.FUNCTION_ID, JSON.stringify(poll))
+        let rawPoll = JSON.parse(response.response);
+        console.log(rawPoll);
+        return {
+            id: rawPoll.collectionId,
+            question: rawPoll.collectionName,
+            options: []
+        }
     }
     public fetchPoll(pollId: string) {
         throw new Error("Method not implemented.");

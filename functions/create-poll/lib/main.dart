@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dart_appwrite/dart_appwrite.dart';
+import 'package:dart_appwrite/models.dart';
 
 /*
   'req' variable has:
@@ -58,6 +59,7 @@ Future<void> start(final req, final res) async {
 
   if (req.variables['APPWRITE_FUNCTION_ENDPOINT'] == null || req.variables['APPWRITE_FUNCTION_API_KEY'] == null) {
     print("Environment variables are not set. Function cannot use Appwrite SDK.");
+    return;
   } else {
     client
         .setEndpoint(req.variables['APPWRITE_FUNCTION_ENDPOINT'])
@@ -66,36 +68,41 @@ Future<void> start(final req, final res) async {
         .setSelfSigned(status: true);
   }
 
-  final jsonPoll = req['payload'];
-  if (jsonPoll == null) {
-    res.send('Poll data is missing', status: 400);
-    return;
-  }
+  try {
+    final jsonPoll = req['payload'];
+    if (jsonPoll == null) {
+      res.send('Poll data is missing', status: 400);
+      return;
+    }
 
-  const databaseId = 'default';
+    const databaseId = 'default';
 
-  final Poll poll = Poll.fromJson(jsonPoll);
+    final Poll poll = Poll.fromJson(jsonPoll);
 
-  /// Create Collection
-  final collection = await database
-      .createCollection(databaseId: databaseId, collectionId: ID.unique(), name: poll.question, permissions: [
-    Permission.read(Role.users()),
-    Permission.write(Role.users()),
-  ]);
+    /// Create Collection
+    final collection = await database
+        .createCollection(databaseId: databaseId, collectionId: ID.unique(), name: poll.question, permissions: [
+      Permission.read(Role.users()),
+      Permission.write(Role.users()),
+    ]);
 
-  /// Create Attributes
-  final attributeResponse = await Future.wait(poll.options
-      .map((option) => database.createStringAttribute(
+    final List<AttributeString> attributeResponse = [];
+    for (final option in poll.options) {
+      final attribute = await database.createStringAttribute(
           databaseId: databaseId,
           collectionId: collection.$id,
           key: option.id,
           size: option.name.length + 20,
-          xrequired: false))
-      .toList());
+          xrequired: false);
+      attributeResponse.add(attribute);
+    }
 
-  res.json({
-    'collectionId': collection.$id,
-    'collectionName': collection.name,
-    'attributes': attributeResponse.map((attribute) => attribute.key).toList(),
-  });
+    res.json({
+      'collectionId': collection.$id,
+      'collectionName': collection.name,
+      'attributes': attributeResponse.map((attribute) => attribute.key).toList(),
+    });
+  } on Exception catch (e) {
+    res.json({'error': e.toString()});
+  }
 }
