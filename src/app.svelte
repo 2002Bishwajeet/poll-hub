@@ -17,20 +17,25 @@
 	import ForgotPassword from './lib/pages/forgotPassword.svelte';
 	import Notifications from './lib/Notifications.svelte';
 	import type SDK from './lib/sdk/sdk';
-	import MockSDK from './lib/sdk/mock/mockSdk';
+	import appwriteSdk from './lib/sdk/appwrite/appwriteSdk';
+	import { user } from './lib/store/user';
 
-	let sdk: SDK = MockSDK;
+	let sdk: SDK = appwriteSdk;
 
 	const routes = {
 		'/': wrap({
 			component: Landing,
 			conditions: [
-				(event: RouteDetail) => {
-					const user = sdk.Authentication.getCurrentUser();
-					if (user) {
-						return false;
+				async (event: RouteDetail) => {
+					try {
+						const userResponse = await sdk.Authentication.getCurrentUser();
+						user.set(userResponse);
+						if (userResponse) {
+							return false;
+						}
+					} catch (error) {
+						return true;
 					}
-					return true;
 				}
 			]
 		}),
@@ -40,13 +45,15 @@
 		'/home': wrap({
 			component: Home,
 			conditions: [
-				(event: RouteDetail) => {
-					const user = sdk.Authentication.getCurrentUser();
-					if (!user) {
-						replace('/');
+				async (event: RouteDetail) => {
+					try {
+						const userResponse = await sdk.Authentication.getCurrentUser();
+						user.set(userResponse);
+						if (userResponse) return true;
+						else return false;
+					} catch (error) {
 						return false;
 					}
-					return true;
 				}
 			]
 		}),

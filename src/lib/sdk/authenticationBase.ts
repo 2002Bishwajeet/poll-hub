@@ -9,5 +9,5 @@ export abstract class AuthenticationBase {
     public abstract loginWithGithub(): void;
     public abstract signInAnonymously(): Promise<Session>;
     public abstract recoverPassword(email: string);
-    public abstract getCurrentUser(): Promise<User>;
+    public abstract getCurrentUser(): Promise<User | null>;
 }
