@@ -1,14 +1,21 @@
 <script lang="ts">
+	import { pollOptions, type Option } from './../store/pollOptions';
 	import Modal from '../components/modal.svelte';
-	import Option from '../components/option.svelte';
+
 	import Header from '../layout/header.svelte';
-	import type option from '../models/option';
+
 	import type SDK from '../sdk/sdk';
-	import MockSDK from '../sdk/mock/mockSdk';
 
-	let options: option[] = [];
+	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
+	import OptionCard from '../components/optionCard.svelte';
 
-	let sdk: SDK = MockSDK;
+	let options: Option[];
+
+	$: pollOptions.subscribe((value) => {
+		options = value;
+	});
+
+	let sdk: SDK = appwriteSdk;
 
 	let showModal = false;
 </script>
@@ -39,7 +46,7 @@
 		style="--grid-item-size:12.5rem; --grid-item-size-small-screens: 10rem"
 	>
 		{#each options as option}
-			<Option {option} />
+			<OptionCard {option} />
 		{/each}
 	</div>
 </main>
