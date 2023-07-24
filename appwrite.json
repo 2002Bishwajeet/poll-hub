@@ -1,0 +1,21 @@
+{
+    "projectId": "pollhub",
+    "projectName": "Poll hub",
+    "functions": [
+        {
+            "$id": "crpoll",
+            "name": "create-poll",
+            "runtime": "dart-2.17",
+            "path": "functions/create-poll",
+            "entrypoint": "lib/main.dart",
+            "ignore": [
+                ".packages",
+                ".dart_tool"
+            ],
+            "execute": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 15
+        }
+    ]
+}
