@@ -4,8 +4,6 @@ import { writable } from "svelte/store";
 export type Option = {
     id: string,
     name: string,
-    createdAt?: Date,
-    updatedAt?: Date,
 }
 
 export const pollOptions = writable<Option[]>([]);

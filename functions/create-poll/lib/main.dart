@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dart_appwrite/dart_appwrite.dart';
 
 /*
@@ -13,24 +15,49 @@ import 'package:dart_appwrite/dart_appwrite.dart';
   If an error is thrown, a response with code 500 will be returned.
 */
 
+class Option {
+  final String id;
+  final String name;
+  Option({
+    required this.id,
+    required this.name,
+  });
+
+  factory Option.fromMap(Map<String, dynamic> map) {
+    return Option(
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+    );
+  }
+
+  factory Option.fromJson(String source) => Option.fromMap(json.decode(source));
+}
+
+class Poll {
+  final String question;
+  final List<Option> options;
+  Poll({
+    required this.question,
+    required this.options,
+  });
+
+  factory Poll.fromMap(Map<String, dynamic> map) {
+    return Poll(
+      question: map['question'] ?? '',
+      options: List<Option>.from(map['options']?.map((x) => Option.fromMap(x))),
+    );
+  }
+
+  factory Poll.fromJson(String source) => Poll.fromMap(json.decode(source));
+}
+
 Future<void> start(final req, final res) async {
   final client = Client();
 
-  // Uncomment the services you need, delete the ones you don't
-  // final account = Account(client);
-  // final avatars = Avatars(client);
-  // final database = Databases(client);
-  // final functions = Functions(client);
-  // final health = Health(client);
-  // final locale = Locale(client);
-  // final storage = Storage(client);
-  // final teams = Teams(client);
-  // final users = Users(client);
+  final database = Databases(client);
 
-  if (req.variables['APPWRITE_FUNCTION_ENDPOINT'] == null ||
-      req.variables['APPWRITE_FUNCTION_API_KEY'] == null) {
-    print(
-        "Environment variables are not set. Function cannot use Appwrite SDK.");
+  if (req.variables['APPWRITE_FUNCTION_ENDPOINT'] == null || req.variables['APPWRITE_FUNCTION_API_KEY'] == null) {
+    print("Environment variables are not set. Function cannot use Appwrite SDK.");
   } else {
     client
         .setEndpoint(req.variables['APPWRITE_FUNCTION_ENDPOINT'])
@@ -39,7 +66,36 @@ Future<void> start(final req, final res) async {
         .setSelfSigned(status: true);
   }
 
+  final jsonPoll = req['payload'];
+  if (jsonPoll == null) {
+    res.send('Poll data is missing', status: 400);
+    return;
+  }
+
+  const databaseId = 'default';
+
+  final Poll poll = Poll.fromJson(jsonPoll);
+
+  /// Create Collection
+  final collection = await database
+      .createCollection(databaseId: databaseId, collectionId: ID.unique(), name: poll.question, permissions: [
+    Permission.read(Role.users()),
+    Permission.write(Role.users()),
+  ]);
+
+  /// Create Attributes
+  final attributeResponse = await Future.wait(poll.options
+      .map((option) => database.createStringAttribute(
+          databaseId: databaseId,
+          collectionId: collection.$id,
+          key: option.id,
+          size: option.name.length + 20,
+          xrequired: false))
+      .toList());
+
   res.json({
-    'areDevelopersAwesome': true,
+    'collectionId': collection.$id,
+    'collectionName': collection.name,
+    'attributes': attributeResponse.map((attribute) => attribute.key).toList(),
   });
 }
