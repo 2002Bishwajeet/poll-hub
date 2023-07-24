@@ -54,10 +54,10 @@ export default class AppwriteAuthentication extends AuthenticationBase {
     }
     public async getCurrentUser(): Promise<User> {
         const response = await this.account.get();
-        const avatar = this.avatar.getInitials(response.name ?? 'Anonymous User')
+        const avatar = this.avatar.getInitials(response.name.length > 0 ? response.name : 'Anonymous User')
         return {
             id: response.$id,
-            name: response.name ?? 'Anonymous User',
+            name: response.name.length > 0 ? response.name : 'Anonymous User',
             email: response.email,
             avatar: avatar,
         }

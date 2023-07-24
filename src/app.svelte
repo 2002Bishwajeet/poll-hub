@@ -20,10 +20,13 @@
 	import { user } from './lib/store/user';
 	import Loading from './lib/loading.svelte';
 	import type { User } from './lib/models/userModel';
+	import { onMount } from 'svelte';
 
 	let sdk: SDK = appwriteSdk;
 
 	let currentUser: User = null;
+
+	$: currentUser = $user;
 
 	const routes = {
 		'/': wrap({

@@ -1,11 +1,11 @@
 <script lang="ts">
+	import Avatar from './avatar.svelte';
 
-    import Avatar from './avatar.svelte';
+	export let name: string;
+	export let size: number;
+	export let url: string | URL;
 
-    export let name: string;
-    export let size: number;
-
-    $: src =  'https://cloud.appwrite.io/v1/avatars/initials?name=Bishwajeet+Parhi&width=80&height=80&project=console'
+	$: src = url instanceof URL ? url.toString() : url;
 </script>
 
 <Avatar {name} {size} {src} />

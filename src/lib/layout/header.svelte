@@ -4,9 +4,11 @@
 	import DropListItem from '../components/dropListItem.svelte';
 	import AvatarInitials from '../components/avatarInitials.svelte';
 	import type { AuthenticationBase } from '../sdk/authenticationBase';
-	import mockSdk from '../sdk/mock/mockSdk';
 	import { addNotification } from '../store/notification';
 	import { replace } from 'svelte-spa-router';
+	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
+	import { user } from '../store/user';
+	import type { User } from '../models/userModel';
 	let showDropdown = false;
 	let droplistElement: HTMLDivElement;
 	function onBlur(event: MouseEvent) {
@@ -17,7 +19,7 @@
 			showDropdown = false;
 		}
 	}
-	let auth: AuthenticationBase = mockSdk.Authentication;
+	let auth: AuthenticationBase = appwriteSdk.Authentication;
 
 	function logout() {
 		try {
@@ -36,6 +38,12 @@
 			});
 		}
 	}
+
+	let currentUser: User = null;
+
+	user.subscribe((value) => {
+		currentUser = value;
+	});
 </script>
 
 <svelte:window on:click={onBlur} />
@@ -48,9 +56,9 @@
 		<nav class="u-flex u-height-100-percent u-sep-inline-start">
 			<div class="drop-wrapper" bind:this={droplistElement}>
 				<button class="user-profile-button" on:click={() => (showDropdown = !showDropdown)}>
-					<AvatarInitials size={40} name="Bishwajeet Parhi" />
+					<AvatarInitials size={40} name={currentUser.name} url={currentUser.avatar} />
 					<span class="user-profile-info u-flex u-main-center u-cross-center"
-						><span class="name">User</span>
+						><span class="name">{currentUser.name}</span>
 						<span
 							aria-hidden="true"
 							class:icon-cheveron-up={showDropdown}
