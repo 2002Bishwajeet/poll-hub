@@ -8,16 +8,16 @@
 	import type { AuthenticationBase } from '../sdk/authenticationBase';
 	import { addNotification } from '../store/notification';
 	import { colors } from '../utils/colors';
-	import mockSdk from '../sdk/mock/mockSdk';
 	import { replace } from 'svelte-spa-router';
+	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
 
 	let name: string, mail: string, pass: string;
 
-	let authentication: AuthenticationBase = mockSdk.Authentication;
+	let authentication: AuthenticationBase = appwriteSdk.Authentication;
 
 	async function register() {
 		try {
-			await authentication.signUp(name, mail, pass);
+			authentication.signUp(name, mail, pass);
 			addNotification({
 				type: 'success',
 				message: 'SignUp successful'
@@ -28,6 +28,28 @@
 			addNotification({
 				type: 'error',
 				message: error.message
+			});
+		}
+	}
+
+	function signInWithGithub() {
+		try {
+			authentication.loginWithGithub();
+		} catch (err) {
+			addNotification({
+				type: 'error',
+				message: err.message
+			});
+		}
+	}
+
+	function signInWithDiscord() {
+		try {
+			authentication.loginWithDiscord();
+		} catch (err) {
+			addNotification({
+				type: 'error',
+				message: err.message
 			});
 		}
 	}
@@ -49,6 +71,7 @@
 					label="Name"
 					placeholder="Your name"
 					autofocus={true}
+					required={true}
 					bind:value={name}
 				/>
 				<InputEmail
@@ -75,11 +98,17 @@
 					<hr class="divider" />
 				</div>
 				<div class="u-flex u-cross-center u-gap-16 u-margin-block-start-16">
-					<IconButton name="Sign in with Github" icon="icon-github" buttonColor={colors.github} />
+					<IconButton
+						name="Sign in with Github"
+						icon="icon-github"
+						buttonColor={colors.github}
+						onClick={signInWithGithub}
+					/>
 					<IconButton
 						name="Sign in with Discord"
 						icon="icon-discord"
 						buttonColor={colors.discord}
+						onClick={signInWithDiscord}
 					/>
 				</div>
 

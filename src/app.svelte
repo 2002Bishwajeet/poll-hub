@@ -3,7 +3,6 @@
 		replace,
 		type ConditionsFailedEvent,
 		type RouteDetail,
-		type RoutePrecondition,
 		type RouteLoadingEvent
 	} from 'svelte-spa-router';
 	import { wrap } from 'svelte-spa-router/wrap';
@@ -47,10 +46,14 @@
 			conditions: [
 				async (event: RouteDetail) => {
 					try {
-						const userResponse = await sdk.Authentication.getCurrentUser();
-						user.set(userResponse);
-						if (userResponse) return true;
-						else return false;
+						user.subscribe(async (data) => {
+							if (!data) {
+								const userResponse = await sdk.Authentication.getCurrentUser();
+								user.set(userResponse);
+							}
+							if (data) return true;
+							else return false;
+						});
 					} catch (error) {
 						return false;
 					}

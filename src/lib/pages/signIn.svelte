@@ -7,11 +7,11 @@
 	import InputPassword from '../elements/form/inputPassword.svelte';
 	import { addNotification } from '../store/notification';
 	import type { AuthenticationBase } from '../sdk/authenticationBase';
-	import mockSdk from '../sdk/mock/mockSdk';
 	import { replace } from 'svelte-spa-router';
+	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
 	let mail: string, pass: string;
 
-	let authentication: AuthenticationBase = mockSdk.Authentication;
+	let authentication: AuthenticationBase = appwriteSdk.Authentication;
 
 	async function login() {
 		try {
@@ -25,6 +25,46 @@
 			addNotification({
 				type: 'error',
 				message: error.message
+			});
+		}
+	}
+
+	async function anonymousLogin() {
+		try {
+			await authentication.signInAnonymously();
+			addNotification({
+				type: 'success',
+				message: 'SignIn successful'
+			});
+			replace('/home');
+		} catch (err) {
+			addNotification({
+				type: 'error',
+				message: err.message
+			});
+		}
+	}
+
+	function signInWithGithub() {
+		try {
+			authentication.loginWithGithub();
+
+		} catch (err) {
+			addNotification({
+				type: 'error',
+				message: err.message
+			});
+		}
+	}
+
+	function signInWithDiscord() {
+		try {
+			authentication.loginWithDiscord();
+
+		} catch (err) {
+			addNotification({
+				type: 'error',
+				message: err.message
 			});
 		}
 	}
@@ -63,7 +103,11 @@
 			<div class="form-footer">
 				<div class="u-flex u-flex-vertical u-cross-center u-gap-12">
 					<button class="button u-width-full-line u-main-center" type="submit"> Sign in </button>
-					<button class="button is-secondary u-width-full-line u-main-center" type="button">
+					<button
+						class="button is-secondary u-width-full-line u-main-center"
+						type="button"
+						on:click={anonymousLogin}
+					>
 						Sign in anonymously
 					</button>
 				</div>
@@ -73,11 +117,17 @@
 					<hr class="divider" />
 				</div>
 				<div class="u-flex u-cross-center u-gap-16 u-margin-block-start-16">
-					<IconButton name="Sign in with Github" icon="icon-github" buttonColor={colors.github} />
+					<IconButton
+						name="Sign in with Github"
+						icon="icon-github"
+						buttonColor={colors.github}
+						onClick={signInWithGithub}
+					/>
 					<IconButton
 						name="Sign in with Discord"
 						icon="icon-discord"
 						buttonColor={colors.discord}
+						onClick={signInWithDiscord}
 					/>
 				</div>
 
