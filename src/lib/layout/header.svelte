@@ -53,6 +53,12 @@
 		<img src={logo} alt="PollHub Logo" width="60" height="60" />
 	</a>
 	<div class="main-header-end">
+		<nav class="u-flex">
+			<button class="button is-small is-text">
+				<span class="icon-share" aria-hidden="true" />
+				<span class="text">Share</span>
+			</button>
+		</nav>
 		<nav class="u-flex u-height-100-percent u-sep-inline-start">
 			<div class="drop-wrapper" bind:this={droplistElement}>
 				<button class="user-profile-button" on:click={() => (showDropdown = !showDropdown)}>
