@@ -20,7 +20,7 @@
 				type: 'success',
 				message: 'SignIn successful'
 			});
-			replace('/home');
+			replace('/#/home');
 		} catch (error) {
 			addNotification({
 				type: 'error',

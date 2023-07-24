@@ -18,8 +18,12 @@
 	import type SDK from './lib/sdk/sdk';
 	import appwriteSdk from './lib/sdk/appwrite/appwriteSdk';
 	import { user } from './lib/store/user';
+	import Loading from './lib/loading.svelte';
+	import type { User } from './lib/models/userModel';
 
 	let sdk: SDK = appwriteSdk;
+
+	let currentUser: User = null;
 
 	const routes = {
 		'/': wrap({
@@ -29,10 +33,12 @@
 					try {
 						const userResponse = await sdk.Authentication.getCurrentUser();
 						user.set(userResponse);
+						currentUser = userResponse;
 						if (userResponse) {
 							return false;
 						}
 					} catch (error) {
+						console.error(error);
 						return true;
 					}
 				}
@@ -43,20 +49,11 @@
 		'/recovery': ForgotPassword,
 		'/home': wrap({
 			component: Home,
+			loadingComponent: Loading,
 			conditions: [
-				async (event: RouteDetail) => {
-					try {
-						user.subscribe(async (data) => {
-							if (!data) {
-								const userResponse = await sdk.Authentication.getCurrentUser();
-								user.set(userResponse);
-							}
-							if (data) return true;
-							else return false;
-						});
-					} catch (error) {
-						return false;
-					}
+				(event: RouteDetail) => {
+					if (!currentUser) return false;
+					return true;
 				}
 			]
 		}),
