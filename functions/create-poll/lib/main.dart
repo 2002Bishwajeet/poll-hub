@@ -55,8 +55,6 @@ class Poll {
 Future<void> start(final req, final res) async {
   final client = Client();
 
-  final database = Databases(client);
-
   if (req.variables['APPWRITE_FUNCTION_ENDPOINT'] == null || req.variables['APPWRITE_FUNCTION_API_KEY'] == null) {
     print("Environment variables are not set. Function cannot use Appwrite SDK.");
     return;
@@ -64,14 +62,18 @@ Future<void> start(final req, final res) async {
     client
         .setEndpoint(req.variables['APPWRITE_FUNCTION_ENDPOINT'])
         .setProject(req.variables['APPWRITE_FUNCTION_PROJECT_ID'])
-        .setKey(req.variables['APPWRITE_FUNCTION_API_KEY'])
-        .setSelfSigned(status: true);
+        .setKey(req.variables['APPWRITE_FUNCTION_API_KEY']);
   }
 
   try {
-    final jsonPoll = req['payload'];
+    print(req.variables['APPWRITE_FUNCTION_ENDPOINT']);
+    print(req.variables['APPWRITE_FUNCTION_PROJECT_ID']);
+    print(req.variables['APPWRITE_FUNCTION_API_KEY']);
+    final database = Databases(client);
+
+    final jsonPoll = req.payload;
     if (jsonPoll == null) {
-      res.send('Poll data is missing', status: 400);
+      res.json({'Error': 'Poll Data is Missing'});
       return;
     }
 

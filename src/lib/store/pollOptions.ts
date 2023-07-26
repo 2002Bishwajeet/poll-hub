@@ -11,7 +11,7 @@ export const pollOptions = writable<Option[]>([]);
 
 export const insertOption = (option: Option) => {
     pollOptions.update((all) => {
-        return [option, ...all];
+        return [...all, option];
     });
 }
 

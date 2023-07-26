@@ -31,6 +31,7 @@
 		};
 		try {
 			const response = await database.createPoll(poll);
+			console.log(response);
 		} catch (error) {
 			addNotification({
 				type: 'error',
