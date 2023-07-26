@@ -59,6 +59,20 @@
 				}
 			]
 		}),
+		'/home/:id' : wrap({
+			component: Home,
+			loadingComponent: Loading,
+			conditions: [
+				async (event: RouteDetail) => {
+						const userResponse = await sdk.Authentication.getCurrentUser();
+						user.set(userResponse);
+						currentUser = userResponse;
+						if (userResponse) {
+							return true;
+						}
+				},
+			]
+		}),
 		// Catch-all
 		// This is optional, but if present it must be the last
 		'*': NotFound
@@ -73,6 +87,9 @@
 				replace('/home');
 				break;
 			case '/home':
+				replace('/');
+				break;
+			case '/home/:id':
 				replace('/');
 				break;
 			default:

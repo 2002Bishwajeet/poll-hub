@@ -19,3 +19,6 @@ export const insertOption = (option: Option) => {
 export const removeOption = (id: string) => {
     pollOptions.update((all) => all.filter((t) => t.id !== id));
 }
+
+
+export const voted = writable<boolean>(false);

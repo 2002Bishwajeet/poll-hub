@@ -21,6 +21,29 @@
 	}
 	let auth: AuthenticationBase = appwriteSdk.Authentication;
 
+	export let showShareButton = false;
+
+	async function share() {
+		//Copy to clipboard
+		await navigator.clipboard.writeText(window.location.href);
+		addNotification({
+			type: 'info',
+			message: 'Link copied to clipboard',
+			timeout: 2000
+		});
+	}
+
+	// Visible to creators only
+	async function stop() {
+		//TODO: Add Stop Poll functionality
+		addNotification({
+			type: 'info',
+			message: 'Poll Stopped',
+			timeout: 2000
+		});
+
+	}
+
 	function logout() {
 		try {
 			auth.logout();
@@ -53,11 +76,16 @@
 		<img src={logo} alt="PollHub Logo" width="60" height="60" />
 	</a>
 	<div class="main-header-end">
-		<nav class="u-flex">
-			<button class="button is-small is-text">
+		<nav class="u-flex u-gap-8">
+			<button class="button is-small is-secondary" on:click={share}>
+				<span class="text">Stop</span>
+			</button>
+			{#if showShareButton}
+			<button class="button is-small is-text" on:click={share}>
 				<span class="icon-share" aria-hidden="true" />
 				<span class="text">Share</span>
 			</button>
+			{/if}
 		</nav>
 		<nav class="u-flex u-height-100-percent u-sep-inline-start">
 			<div class="drop-wrapper" bind:this={droplistElement}>

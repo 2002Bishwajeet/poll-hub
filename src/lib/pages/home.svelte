@@ -7,9 +7,42 @@
 	import type { DatabaseBase } from '../sdk/databaseBase';
 	import type { Poll } from '../models/poll';
 	import { addNotification } from '../store/notification';
+	import { querystring, replace } from 'svelte-spa-router';
+
 
 	let options: Option[];
 	let question: string;
+	let voteOnly : boolean= false;
+	export let params = {};
+
+	/* 
+	If there are params, then it means the poll has been created,
+	two things can happen here:
+	It has query params with admin key, which means the user is the admin
+	Or it has query params with share key, which means the user is a user
+	*/
+
+	/* :id is the collectionId */
+	$: collectionId  = params['id'];
+
+	/* queries would be of this type
+		q: question
+		o: options[],
+	*/
+	let query = new URLSearchParams($querystring);
+	if(query)
+	{
+	 question = query.get('q');
+	 options = query.getAll('o').map((option) => {
+		return {
+			id: option,
+			name: option,
+		};
+	});
+	
+	pollOptions.set(options);
+
+	}	
 
 	$: pollOptions.subscribe((value) => {
 		options = value;
@@ -31,7 +64,14 @@
 		};
 		try {
 			const response = await database.createPoll(poll);
-			console.log(response);
+			const params = new URLSearchParams();
+			params.set('q', response.question);
+			response.options.forEach((option) => {
+				params.append('o', option.id);
+			});
+
+			replace(`/home/${response.id}?${params.toString()}`);
+
 		} catch (error) {
 			addNotification({
 				type: 'error',
@@ -40,11 +80,19 @@
 		}
 	}
 
+	$: shareButton = collectionId ? true : false;
+	$: voteOnly = collectionId ? true : false;
+	
+
 	let showModal = false;
 </script>
 
 <main class="main-content u-full-screen-height">
-	<Header />
+	<Header  showShareButton={shareButton} />
+	<!-- svelte-ignore empty-block -->
+	{#if collectionId}
+		
+ {:else}
 	<div class="u-flex-vertical u-main-center u-cross-center u-gap-16">
 		<div class="u-flex u-main-center u-cross-center">
 			<div class="container">
@@ -64,13 +112,14 @@
 		>
 		<Modal bind:showModal />
 	</div>
+	{/if}
 
 	<div
 		class="grid-box u-margin-32"
 		style="--grid-item-size:12.5rem; --grid-item-size-small-screens: 10rem"
 	>
 		{#each options as option}
-			<OptionCard {option} />
+			<OptionCard {option} {voteOnly}  />
 		{/each}
 	</div>
 </main>
