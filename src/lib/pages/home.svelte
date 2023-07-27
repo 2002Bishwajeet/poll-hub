@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { colors } from './../utils/colors';
 	import { pollOptions, type Option } from './../store/pollOptions';
 	import Modal from '../components/modal.svelte';
 	import Header from '../layout/header.svelte';
@@ -8,6 +9,16 @@
 	import type { Poll } from '../models/poll';
 	import { addNotification } from '../store/notification';
 	import { querystring, replace } from 'svelte-spa-router';
+	import {Bar} from 'svelte-chartjs'
+	import {
+    Chart,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+  } from 'chart.js';
 
 
 	let options: Option[];
@@ -41,6 +52,16 @@
 	});
 	
 	pollOptions.set(options);
+
+ Chart.register(
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale
+  );
+
 
 	}	
 
@@ -82,6 +103,18 @@
 
 	$: shareButton = collectionId ? true : false;
 	$: voteOnly = collectionId ? true : false;
+
+	const data = {
+  labels: options.map((option) => option.name),
+  datasets: [
+    {
+      label: '% of Votes',
+      data: [12, 19],
+      backgroundColor: colors.appwritePink300,
+      borderWidth: 2,
+    },
+  ],
+};
 	
 
 	let showModal = false;
@@ -91,7 +124,9 @@
 	<Header  showShareButton={shareButton} />
 	<!-- svelte-ignore empty-block -->
 	{#if collectionId}
-		
+	<div class= "u-margin-32 h-32   ">
+		<Bar {data} options={{ responsive: true, maintainAspectRatio: true}} />
+		</div>
  {:else}
 	<div class="u-flex-vertical u-main-center u-cross-center u-gap-16">
 		<div class="u-flex u-main-center u-cross-center">
@@ -122,10 +157,16 @@
 			<OptionCard {option} {voteOnly}  />
 		{/each}
 	</div>
+
 </main>
 
 <style lang="scss">
 	main {
 		min-width: 100vw;
 	}
+
+	.h-32{
+		height: 30rem;
+	}
+
 </style>
