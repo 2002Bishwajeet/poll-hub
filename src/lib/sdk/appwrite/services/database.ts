@@ -28,7 +28,6 @@ export default class AppwriteDatabase implements DatabaseBase {
         }
         
         let rawPoll : PollResponse = JSON.parse(response.response);
-        console.log(rawPoll);
         return {
             id: rawPoll.collectionId,
             question: rawPoll.collectionName,
@@ -61,9 +60,17 @@ export default class AppwriteDatabase implements DatabaseBase {
        return result;
     }
     //TODO: Enable Streaming
-    public streamPoll(pollId: string) {
-     return  this.client.subscribe(`databases.${VARS.DATABASE_ID}.collections.${pollId}.documents`, (event) => {
-              console.log(event);
+    public streamPoll(poll: Poll, cb: (vote: Vote) => void | PromiseLike<void>) {
+     return  this.client.subscribe(`databases.${VARS.DATABASE_ID}.collections.${poll.id}.documents`, (event) => {
+             const votes = poll.options.map((opt) => {
+                if(event.payload[opt.id] != null || event.payload[opt.id]!= undefined) {
+                    return {
+                        id: event.payload["$id"],
+                        optionId: opt.id
+                    }
+                }
+             });
+             return cb(votes[0]);
          }
        )
 
@@ -74,7 +81,6 @@ export default class AppwriteDatabase implements DatabaseBase {
        const  response = await this.database.createDocument(VARS.DATABASE_ID,pollId, vote.id, {
             [vote.optionId]: vote.id
        });
-       console.log(response);
     }
 
 

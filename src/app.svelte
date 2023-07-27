@@ -102,7 +102,6 @@
 			case '/home/:id':
 				if(event.detail.querystring && currentUser )
 				{
-					console.log('here');
 					replace('/home');
 				}
 				else if(!currentUser && event.detail.querystring)

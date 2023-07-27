@@ -141,24 +141,23 @@ onMount(async () => {
 				options: options
 			}
 			const polls = await database.fetchPoll(poll);
-			console.log(polls);
-			
 			
 	 data = {
   labels: polls.map((option) =>  option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1)),
   datasets: [
-    {
-      label: '% of Votes',
-      data: polls.map((option) => option.value.length),
-      backgroundColor: colors.appwritePink300,
-      borderWidth: 2,
-    },
-  ],
+	  {
+		  label: '% of Votes',
+		  data: polls.map((option) => option.value.length),
+		  backgroundColor: colors.appwritePink300,
+		  borderWidth: 2,
+		},
+	],
 };
-
-		}
-
+}
 	})
+
+	
+
 
 </script>
 

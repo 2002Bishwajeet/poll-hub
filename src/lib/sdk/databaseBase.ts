@@ -8,7 +8,7 @@ export abstract class DatabaseBase {
 
     public abstract fetchPoll(poll: Poll) : PollResult[] | Promise<PollResult[]>;
 
-    public abstract streamPoll(pollId: string);
+    public abstract streamPoll(poll: Poll, cb: (vote: Vote) => void | PromiseLike<void>);
 
     public abstract stopPoll(pollId: string);
 
