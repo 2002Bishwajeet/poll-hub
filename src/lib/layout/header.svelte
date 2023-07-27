@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
-	import logo from '../../assets/poll-hub-transparent-large.png';
+	import logo from '../../assets/poll-hub-horizontal.png';
 	import DropListItem from '../components/dropListItem.svelte';
 	import AvatarInitials from '../components/avatarInitials.svelte';
 	import type { AuthenticationBase } from '../sdk/authenticationBase';
 	import { addNotification } from '../store/notification';
-	import { replace } from 'svelte-spa-router';
+	import { replace, link } from 'svelte-spa-router';
 	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
 	import { user } from '../store/user';
 	import type { User } from '../models/userModel';
@@ -74,8 +74,8 @@
 <svelte:window on:click={onBlur} />
 
 <header class="main-header u-padding-inline-end-0">
-	<a class="logo" href="/home">
-		<img src={logo} alt="PollHub Logo" width="60" height="60" />
+	<a class="logo" href="/home" use:link>
+		<img src={logo} alt="PollHub Logo"   height="60" />
 	</a>
 	<div class="main-header-end">
 		<nav class="u-flex u-gap-8">

@@ -4,6 +4,7 @@ import type { DatabaseBase } from "../../databaseBase";
 import { VARS } from "../../../system";
 import { type Option } from "../../../store/pollOptions";
 import type { Vote } from "../../../models/vote";
+import type { PollResult } from "../../../models/pollResults";
 
 export default class AppwriteDatabase implements DatabaseBase {
 
@@ -40,12 +41,26 @@ export default class AppwriteDatabase implements DatabaseBase {
             )
         }
     }
-    public async fetchPoll(pollId: string) {
-       const response = await this.database.listDocuments(VARS.DATABASE_ID,pollId, [Query.limit(100)]);
+    public async fetchPoll(poll: Poll) : Promise<PollResult[]> {
+       const response = await this.database.listDocuments(VARS.DATABASE_ID,poll.id, [Query.limit(100)]);
        const documents =response.documents;
-       documents.map((document) => {
+       const options = poll.options.map((opt) => opt.id);
+       let result : PollResult[] = options.map((opt) => {
+        return {
+            optionId: opt,
+            value: []
+        }
        });
+       documents.map((document) => {
+        options.forEach((opt) => {
+            if(document[opt] != null || document[opt]!= undefined) {
+               result.find((res) => res.optionId === opt)?.value.push(document[opt]);
+            }
+        })
+       });
+       return result;
     }
+    //TODO: Enable Streaming
     public streamPoll(pollId: string) {
      return  this.client.subscribe(`databases.${VARS.DATABASE_ID}.collections.${pollId}.documents`, (event) => {
               console.log(event);
@@ -54,10 +69,12 @@ export default class AppwriteDatabase implements DatabaseBase {
 
     }
 
-    public async castPoll(poll: Poll,vote: Vote): Promise<void> {
-       const  response = this.database.createDocument(VARS.DATABASE_ID, poll.id, vote.id, {
-            optionId: vote.id
+    public async castPoll(pollId: string,vote: Vote): Promise<void> {
+
+       const  response = await this.database.createDocument(VARS.DATABASE_ID,pollId, vote.id, {
+            [vote.optionId]: vote.id
        });
+       console.log(response);
     }
 
 

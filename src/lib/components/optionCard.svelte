@@ -1,15 +1,47 @@
 <script lang="ts">
+	import { AppwriteException } from 'appwrite';
+	import type { Vote } from '../models/vote';
+	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
+	import type { DatabaseBase } from '../sdk/databaseBase';
 	import { removeOption, type Option, voted } from '../store/pollOptions';
+	import { user } from '../store/user';
+	import { addNotification } from '../store/notification';
 
+	export let collectionId: string = '';
 	export let option: Option = null;
 	export let voteOnly = false;
-	let isVoted :boolean = false;
+	export let isVoted :boolean = false;
 	function deleteOption() {
 		removeOption(option.id);
 	}
-	function vote() {
-		console.log('voted')
-		voted.set(true);
+
+	let database: DatabaseBase = appwriteSdk.Database;
+
+	async function vote() {
+		try {
+			const vote: Vote = {
+				id: $user.id,
+				optionId: option.id,
+			}
+			await database.castPoll(collectionId,vote);
+			voted.set(true);
+		} catch (error) {
+			// Check if error is AppwriteException
+			if (error instanceof AppwriteException) {
+					if(error.code === 409) {
+						voted.set(true);
+					}
+				}
+				else 
+				{  
+					console.error(error);
+				}
+				addNotification({
+					type: 'error',
+					message: error,
+				});
+			
+		}
 
 	}
 

@@ -21,6 +21,7 @@
   } from 'chart.js';
 	import { user } from '../store/user';
 	import type { User } from '../models/userModel.js';
+	import { onMount } from 'svelte';
 
 
 	let options: Option[];
@@ -29,6 +30,8 @@
 	let creator: boolean = false;
 	export let params = {};
 	let currentUser: User = null;
+
+	let database: DatabaseBase = appwriteSdk.Database;
 
 
 	$: user.subscribe((value) => {
@@ -42,6 +45,7 @@
 	/* queries would be of this type
 		q: question
 		o: options[],
+		u: userId of the creator
 	*/
 	let query = new URLSearchParams($querystring);
 	if(query)
@@ -75,7 +79,7 @@
 		options = value;
 	});
 
-	let database: DatabaseBase = appwriteSdk.Database;
+
 
 	async function createPoll() {
 		if (!question || !options) {
@@ -113,26 +117,56 @@
 	$: shareButton = collectionId ? true : false;
 	$: voteOnly = collectionId ? true : false;
 
-	const data = {
-  labels: options.map((option) => option.name),
+	let data = {
+  labels: options.map((option) =>  option.name.charAt(0).toUpperCase() + option.name.slice(1)),
   datasets: [
     {
       label: '% of Votes',
-      data: [12, 19],
+      data: [0, 0],
       backgroundColor: colors.appwritePink300,
       borderWidth: 2,
     },
   ],
 };
 	
+let showModal = false;
 
-	let showModal = false;
+
+onMount(async () => {
+		if(params['id'])
+		{
+			const poll : Poll = {
+				id: params['id'],
+				question: question,
+				options: options
+			}
+			const polls = await database.fetchPoll(poll);
+			console.log(polls);
+			
+			
+	 data = {
+  labels: polls.map((option) =>  option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1)),
+  datasets: [
+    {
+      label: '% of Votes',
+      data: polls.map((option) => option.value.length),
+      backgroundColor: colors.appwritePink300,
+      borderWidth: 2,
+    },
+  ],
+};
+
+		}
+
+	})
+
 </script>
 
 <main class="main-content u-full-screen-height">
 	<Header  showShareButton={shareButton} showStopButton = {creator} />
 	<!-- svelte-ignore empty-block -->
 	{#if collectionId}
+	<h3 class="heading-level-1 text-center  u-cross-child-center u-margin-32">{question}</h3>
 	<div class= "u-margin-32 h-32   ">
 		<Bar {data} options={{ responsive: true, maintainAspectRatio: true}} />
 		</div>
@@ -163,7 +197,7 @@
 		style="--grid-item-size:12.5rem; --grid-item-size-small-screens: 10rem"
 	>
 		{#each options as option}
-			<OptionCard {option} {voteOnly}  />
+			<OptionCard {option} {voteOnly} {collectionId}  />
 		{/each}
 	</div>
 
