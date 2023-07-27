@@ -8,10 +8,12 @@
 	import type { AuthenticationBase } from '../sdk/authenticationBase';
 	import { addNotification } from '../store/notification';
 	import { colors } from '../utils/colors';
-	import { replace } from 'svelte-spa-router';
+	import { link, querystring, replace } from 'svelte-spa-router';
 	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
 
 	let name: string, mail: string, pass: string;
+
+	let loginLink: string = `/login?${$querystring}`;
 
 	let authentication: AuthenticationBase = appwriteSdk.Authentication;
 
@@ -23,7 +25,16 @@
 				message: 'SignUp successful'
 			});
 			await authentication.login(mail, pass);
-			replace('/home');
+			if($querystring)
+			{
+				const redirect_uri = new URLSearchParams($querystring).get('redirect_uri');
+				replace(redirect_uri);
+			}
+			else
+			{
+				replace('/home');
+			}
+
 		} catch (error) {
 			addNotification({
 				type: 'error',
@@ -116,7 +127,7 @@
 					<span class="text"> Already have an account? </span>
 
 					<button class="is-text u-bold u-underline">
-						<a href="#/login" class="text">Sign In</a>
+						<a href={loginLink}  use:link class="text">Sign In</a>
 					</button>
 				</div>
 			</div>

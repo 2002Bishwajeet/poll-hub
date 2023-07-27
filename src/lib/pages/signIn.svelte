@@ -7,11 +7,25 @@
 	import InputPassword from '../elements/form/inputPassword.svelte';
 	import { addNotification } from '../store/notification';
 	import type { AuthenticationBase } from '../sdk/authenticationBase';
-	import { replace } from 'svelte-spa-router';
+	import { querystring, replace, link } from 'svelte-spa-router';
 	import appwriteSdk from '../sdk/appwrite/appwriteSdk';
 	let mail: string, pass: string;
 
+	let signUpLink: string = `/signup?${$querystring}`;
+
 	let authentication: AuthenticationBase = appwriteSdk.Authentication;
+
+	function navigate() {
+		if($querystring)
+			{
+				const redirect_uri = new URLSearchParams($querystring).get('redirect_uri');
+				replace(redirect_uri);
+			}
+			else
+			{
+				replace('/home');
+			}
+	}
 
 	async function login() {
 		try {
@@ -20,7 +34,7 @@
 				type: 'success',
 				message: 'SignIn successful'
 			});
-			replace('/home');
+			navigate();
 		} catch (error) {
 			addNotification({
 				type: 'error',
@@ -36,7 +50,7 @@
 				type: 'success',
 				message: 'SignIn successful'
 			});
-			replace('/home');
+navigate();
 		} catch (err) {
 			addNotification({
 				type: 'error',
@@ -48,6 +62,11 @@
 	function signInWithGithub() {
 		try {
 			authentication.loginWithGithub();
+			addNotification({
+				type: 'success',
+				message: 'SignIn successful'
+			});
+			navigate();
 		} catch (err) {
 			addNotification({
 				type: 'error',
@@ -59,6 +78,12 @@
 	function signInWithDiscord() {
 		try {
 			authentication.loginWithDiscord();
+			addNotification({
+				type: 'success',
+				message: 'SignIn successful'
+			});
+navigate();
+
 		} catch (err) {
 			addNotification({
 				type: 'error',
@@ -137,7 +162,7 @@
 					<div class="divider-horizontal u-cross-child-center">|</div>
 
 					<button class="is-text u-bold">
-						<a href="#/signup" class="text">Sign Up</a>
+						<a href={signUpLink} use:link class="text">Sign Up</a>
 					</button>
 				</div>
 			</div>

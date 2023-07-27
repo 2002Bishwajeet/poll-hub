@@ -53,6 +53,7 @@
 				message: 'Logout successful',
 				timeout: 2000
 			});
+			user.set(null);
 			replace('/');
 		} catch (error) {
 			addNotification({

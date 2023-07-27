@@ -63,13 +63,24 @@
 			loadingComponent: Loading,
 			conditions: [
 				async (event: RouteDetail) => {
-						const userResponse = await sdk.Authentication.getCurrentUser();
-						user.set(userResponse);
-						currentUser = userResponse;
-						if (userResponse) {
-							return true;
+						try {
+							const userResponse = await sdk.Authentication.getCurrentUser();
+							user.set(userResponse);
+							currentUser = userResponse;
+							if (userResponse) {
+								return true;
+							}
+						} catch (error) {
+							return false;
 						}
 				},
+				(event: RouteDetail) => {
+					const queryParams = new URLSearchParams(event.querystring);
+					if( event.params['id']  && queryParams.has('u') && queryParams.has('q') && queryParams.has('o'))
+					{
+						return true;
+					}
+				}
 			]
 		}),
 		// Catch-all
@@ -89,7 +100,20 @@
 				replace('/');
 				break;
 			case '/home/:id':
-				replace('/');
+				if(event.detail.querystring && currentUser )
+				{
+					console.log('here');
+					replace('/home');
+				}
+				else if(!currentUser && event.detail.querystring)
+				{
+					const queryparam = new URLSearchParams();
+				
+					queryparam.set('redirect_uri', window.location.hash);
+					const redirectUrl = `/login?${queryparam.toString()}`;
+
+					replace(redirectUrl);
+				}
 				break;
 			default:
 				replace('/');

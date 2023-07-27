@@ -35,12 +35,6 @@
 		currentUser = value;
 	});
 
-	/* 
-	If there are params, then it means the poll has been created,
-	two things can happen here:
-	It has query params with admin key, which means the user is the admin
-	Or it has query params with share key, which means the user is a user
-	*/
 
 	/* :id is the collectionId */
 	$: collectionId  = params['id'];
@@ -60,7 +54,7 @@
 		};
 	});
 	if(query.has('u'))
-	creator = query.get('u') === currentUser.id;
+	creator = query.get('u') === $user.id;
 	
 	
 	pollOptions.set(options);
@@ -104,9 +98,7 @@
 			});
 			// Adding user id to query params
 			// to guess if the user is the creator or not
-			user.subscribe((value) => {
-				params.set('u', value.id);
-			});
+				params.set('u', $user.id);
 
 			replace(`/home/${response.id}?${params.toString()}`);
 
