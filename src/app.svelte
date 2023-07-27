@@ -24,7 +24,9 @@
 
 	let currentUser: User = null;
 
-	$: currentUser = $user;
+user.subscribe((value) => {
+	currentUser = value;
+});
 
 	const routes = {
 		'/': wrap({
