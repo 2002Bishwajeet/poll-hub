@@ -33,10 +33,10 @@ export default class AppwriteAuthentication extends AuthenticationBase {
         this.account.deleteSession("current");
     }
     public loginWithDiscord(): void {
-        this.account.createOAuth2Session("discord", 'http://localhost:3000/#/home', window.location.href);
+        this.account.createOAuth2Session("discord", `${window.location.href}/home`, window.location.href);
     }
     public loginWithGithub(): void {
-        this.account.createOAuth2Session("github", 'http://localhost:3000/#/home', window.location.href);
+        this.account.createOAuth2Session("github", `${window.location.href}/home`, window.location.href);
     }
     public async signInAnonymously(): Promise<Session> {
         const response = await this.account.createAnonymousSession();
