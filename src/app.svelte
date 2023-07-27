@@ -6,7 +6,6 @@
 		type RouteLoadingEvent
 	} from 'svelte-spa-router';
 	import { wrap } from 'svelte-spa-router/wrap';
-
 	import '@appwrite.io/pink';
 	import NotFound from './lib/pages/notFound.svelte';
 	import Landing from './lib/pages/landing.svelte';

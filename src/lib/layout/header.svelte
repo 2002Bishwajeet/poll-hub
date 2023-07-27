@@ -22,6 +22,7 @@
 	let auth: AuthenticationBase = appwriteSdk.Authentication;
 
 	export let showShareButton = false;
+	export let showStopButton = false;
 
 	async function share() {
 		//Copy to clipboard
@@ -77,9 +78,11 @@
 	</a>
 	<div class="main-header-end">
 		<nav class="u-flex u-gap-8">
+			{#if showStopButton}
 			<button class="button is-small is-secondary" on:click={share}>
 				<span class="text">Stop</span>
 			</button>
+			{/if}
 			{#if showShareButton}
 			<button class="button is-small is-text" on:click={share}>
 				<span class="icon-share" aria-hidden="true" />

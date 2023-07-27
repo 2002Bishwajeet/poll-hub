@@ -19,12 +19,21 @@
     CategoryScale,
     LinearScale,
   } from 'chart.js';
+	import { user } from '../store/user';
+	import type { User } from '../models/userModel.js';
 
 
 	let options: Option[];
 	let question: string;
 	let voteOnly : boolean= false;
+	let creator: boolean = false;
 	export let params = {};
+	let currentUser: User = null;
+
+
+	$: user.subscribe((value) => {
+		currentUser = value;
+	});
 
 	/* 
 	If there are params, then it means the poll has been created,
@@ -50,6 +59,9 @@
 			name: option,
 		};
 	});
+	if(query.has('u'))
+	creator = query.get('u') === currentUser.id;
+	
 	
 	pollOptions.set(options);
 
@@ -90,6 +102,11 @@
 			response.options.forEach((option) => {
 				params.append('o', option.id);
 			});
+			// Adding user id to query params
+			// to guess if the user is the creator or not
+			user.subscribe((value) => {
+				params.set('u', value.id);
+			});
 
 			replace(`/home/${response.id}?${params.toString()}`);
 
@@ -121,7 +138,7 @@
 </script>
 
 <main class="main-content u-full-screen-height">
-	<Header  showShareButton={shareButton} />
+	<Header  showShareButton={shareButton} showStopButton = {creator} />
 	<!-- svelte-ignore empty-block -->
 	{#if collectionId}
 	<div class= "u-margin-32 h-32   ">
