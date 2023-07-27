@@ -8,7 +8,7 @@
 
 A realtime polling application built using Svelte and Appwrite. It was created for a workshop for [Appwrite Developer Meetup Delhi](https://lu.ma/appwriteheroes-delhi23).
 
-Slides here :<INSERT LINK>
+Slides here : [poll-hub-slides.vercel.app](https://poll-hub-slides.vercel.app/)
 
 ## What is Appwrite
 
