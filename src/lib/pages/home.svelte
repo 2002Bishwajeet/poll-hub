@@ -92,8 +92,6 @@
 	$: shareButton = collectionId ? true : false;
 	$: voteOnly = collectionId ? true : false;
 
- 
-
 	let data = {
 		labels: options.map((option) => option.name.charAt(0).toUpperCase() + option.name.slice(1)),
 		datasets: [
@@ -106,19 +104,21 @@
 		]
 	};
 
-$:	pollResults.subscribe((value) => {
-	if(value.length === 0) return;
+	$: pollResults.subscribe((value) => {
+		if (value.length === 0) return;
 		data = {
-		labels: value.map((option) => option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1)),
-		datasets: [
-			{
-				label: '% of Votes',
-				data: value.map((option) => option.value.length),
-				backgroundColor: colors.appwritePink300,
-				borderWidth: 2
-			}
-		]
-	};
+			labels: value.map(
+				(option) => option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1)
+			),
+			datasets: [
+				{
+					label: '% of Votes',
+					data: value.map((option) => option.value.length),
+					backgroundColor: colors.appwritePink300,
+					borderWidth: 2
+				}
+			]
+		};
 	});
 
 	let showModal = false;
@@ -152,14 +152,12 @@ $:	pollResults.subscribe((value) => {
 
 	$: if (collectionId) {
 		const poll: Poll = {
-				id: params['id'],
-				question: question,
-				options: options
-			};
-		database.streamPoll(poll, addResult)
+			id: params['id'],
+			question: question,
+			options: options
+		};
+		database.streamPoll(poll, addResult);
 	}
-
-
 </script>
 
 <main class="main-content u-full-screen-height">

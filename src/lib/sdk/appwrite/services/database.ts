@@ -66,14 +66,16 @@ export default class AppwriteDatabase implements DatabaseBase {
 		return this.client.subscribe(
 			`databases.${VARS.DATABASE_ID}.collections.${poll.id}.documents`,
 			(event) => {
-				const votes = poll.options.map((opt) => {
-					if (event.payload[opt.id] != null || event.payload[opt.id] != undefined) {
-						return {
-							id: event.payload['$id'],
-							optionId: opt.id
-						};
-					}
-				}).filter((option) => !!option);
+				const votes = poll.options
+					.map((opt) => {
+						if (event.payload[opt.id] != null || event.payload[opt.id] != undefined) {
+							return {
+								id: event.payload['$id'],
+								optionId: opt.id
+							};
+						}
+					})
+					.filter((option) => !!option);
 				return handleVotes(votes[0]);
 			}
 		);
