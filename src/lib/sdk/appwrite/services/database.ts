@@ -62,8 +62,7 @@ export default class AppwriteDatabase implements DatabaseBase {
 		});
 		return result;
 	}
-	//TODO: Enable Streaming
-	public streamPoll(poll: Poll, cb: (vote: Vote) => void | PromiseLike<void>) {
+	public streamPoll(poll: Poll, handleVotes: (vote: Vote) => void | PromiseLike<void>) {
 		return this.client.subscribe(
 			`databases.${VARS.DATABASE_ID}.collections.${poll.id}.documents`,
 			(event) => {
@@ -74,8 +73,8 @@ export default class AppwriteDatabase implements DatabaseBase {
 							optionId: opt.id
 						};
 					}
-				});
-				return cb(votes[0]);
+				}).filter((option) => !!option);
+				return handleVotes(votes[0]);
 			}
 		);
 	}

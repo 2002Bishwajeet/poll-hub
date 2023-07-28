@@ -14,6 +14,7 @@
 	import { user } from '../store/user';
 	import type { User } from '../models/userModel.js';
 	import { onMount } from 'svelte';
+	import { addResult, pollResults } from '../store/pollResults';
 
 	let options: Option[];
 	let question: string;
@@ -91,6 +92,8 @@
 	$: shareButton = collectionId ? true : false;
 	$: voteOnly = collectionId ? true : false;
 
+ 
+
 	let data = {
 		labels: options.map((option) => option.name.charAt(0).toUpperCase() + option.name.slice(1)),
 		datasets: [
@@ -103,6 +106,21 @@
 		]
 	};
 
+$:	pollResults.subscribe((value) => {
+	if(value.length === 0) return;
+		data = {
+		labels: value.map((option) => option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1)),
+		datasets: [
+			{
+				label: '% of Votes',
+				data: value.map((option) => option.value.length),
+				backgroundColor: colors.appwritePink300,
+				borderWidth: 2
+			}
+		]
+	};
+	});
+
 	let showModal = false;
 
 	onMount(async () => {
@@ -114,21 +132,34 @@
 			};
 			const polls = await database.fetchPoll(poll);
 
-			data = {
-				labels: polls.map(
-					(option) => option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1)
-				),
-				datasets: [
-					{
-						label: '% of Votes',
-						data: polls.map((option) => option.value.length),
-						backgroundColor: colors.appwritePink300,
-						borderWidth: 2
-					}
-				]
-			};
+			pollResults.set(polls);
+
+			// data = {
+			// 	labels: polls.map(
+			// 		(option) => option.optionId.charAt(0).toUpperCase() + option.optionId.slice(1)
+			// 	),
+			// 	datasets: [
+			// 		{
+			// 			label: '% of Votes',
+			// 			data: polls.map((option) => option.value.length),
+			// 			backgroundColor: colors.appwritePink300,
+			// 			borderWidth: 2
+			// 		}
+			// 	]
+			// };
 		}
 	});
+
+	$: if (collectionId) {
+		const poll: Poll = {
+				id: params['id'],
+				question: question,
+				options: options
+			};
+		database.streamPoll(poll, addResult)
+	}
+
+
 </script>
 
 <main class="main-content u-full-screen-height">
