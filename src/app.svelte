@@ -24,9 +24,9 @@
 
 	let currentUser: User = null;
 
-user.subscribe((value) => {
-	currentUser = value;
-});
+	user.subscribe((value) => {
+		currentUser = value;
+	});
 
 	const routes = {
 		'/': wrap({
@@ -60,26 +60,30 @@ user.subscribe((value) => {
 				}
 			]
 		}),
-		'/home/:id' : wrap({
+		'/home/:id': wrap({
 			component: Home,
 			loadingComponent: Loading,
 			conditions: [
 				async (event: RouteDetail) => {
-						try {
-							const userResponse = await sdk.Authentication.getCurrentUser();
-							user.set(userResponse);
-							currentUser = userResponse;
-							if (userResponse) {
-								return true;
-							}
-						} catch (error) {
-							return false;
+					try {
+						const userResponse = await sdk.Authentication.getCurrentUser();
+						user.set(userResponse);
+						currentUser = userResponse;
+						if (userResponse) {
+							return true;
 						}
+					} catch (error) {
+						return false;
+					}
 				},
 				(event: RouteDetail) => {
 					const queryParams = new URLSearchParams(event.querystring);
-					if( event.params['id']  && queryParams.has('u') && queryParams.has('q') && queryParams.has('o'))
-					{
+					if (
+						event.params['id'] &&
+						queryParams.has('u') &&
+						queryParams.has('q') &&
+						queryParams.has('o')
+					) {
 						return true;
 					}
 				}
@@ -102,14 +106,11 @@ user.subscribe((value) => {
 				replace('/');
 				break;
 			case '/home/:id':
-				if(event.detail.querystring && currentUser )
-				{
+				if (event.detail.querystring && currentUser) {
 					replace('/home');
-				}
-				else if(!currentUser && event.detail.querystring)
-				{
+				} else if (!currentUser && event.detail.querystring) {
 					const queryparam = new URLSearchParams();
-				
+
 					queryparam.set('redirect_uri', window.location.hash);
 					const redirectUrl = `/login?${queryparam.toString()}`;
 

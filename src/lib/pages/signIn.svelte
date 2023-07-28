@@ -16,15 +16,12 @@
 	let authentication: AuthenticationBase = appwriteSdk.Authentication;
 
 	function navigate() {
-		if($querystring)
-			{
-				const redirect_uri = new URLSearchParams($querystring).get('redirect_uri');
-				replace(redirect_uri);
-			}
-			else
-			{
-				replace('/home');
-			}
+		if ($querystring) {
+			const redirect_uri = new URLSearchParams($querystring).get('redirect_uri');
+			replace(redirect_uri);
+		} else {
+			replace('/home');
+		}
 	}
 
 	async function login() {
@@ -50,7 +47,7 @@
 				type: 'success',
 				message: 'SignIn successful'
 			});
-navigate();
+			navigate();
 		} catch (err) {
 			addNotification({
 				type: 'error',
@@ -82,8 +79,7 @@ navigate();
 				type: 'success',
 				message: 'SignIn successful'
 			});
-navigate();
-
+			navigate();
 		} catch (err) {
 			addNotification({
 				type: 'error',

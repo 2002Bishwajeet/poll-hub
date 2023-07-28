@@ -10,7 +10,7 @@
 	export let collectionId: string = '';
 	export let option: Option = null;
 	export let voteOnly = false;
-	export let isVoted :boolean = false;
+	export let isVoted: boolean = false;
 	function deleteOption() {
 		removeOption(option.id);
 	}
@@ -21,43 +21,37 @@
 		try {
 			const vote: Vote = {
 				id: $user.id,
-				optionId: option.id,
-			}
-			await database.castPoll(collectionId,vote);
+				optionId: option.id
+			};
+			await database.castPoll(collectionId, vote);
 			voted.set(true);
 		} catch (error) {
 			// Check if error is AppwriteException
 			if (error instanceof AppwriteException) {
-					if(error.code === 409) {
-						voted.set(true);
-					}
+				if (error.code === 409) {
+					voted.set(true);
 				}
-				else 
-				{  
-					console.error(error);
-				}
-				addNotification({
-					type: 'error',
-					message: error,
-				});
-			
+			} else {
+				console.error(error);
+			}
+			addNotification({
+				type: 'error',
+				message: error
+			});
 		}
-
 	}
 
 	$: voted.subscribe((value) => {
 		isVoted = value;
 	});
-
-
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class=" card u-text-center" on:click={voteOnly && !isVoted ? vote : null}>
 	{#if !voteOnly}
-	<button class="is-icon u-position-absolute close-icon" on:click={deleteOption}>
-		<span class="icon-x" />
-	</button>
+		<button class="is-icon u-position-absolute close-icon" on:click={deleteOption}>
+			<span class="icon-x" />
+		</button>
 	{/if}
 	<h5 class="heading-level-5 u-bold u-padding-block-12">{option.name ?? 'Option'}</h5>
 </div>

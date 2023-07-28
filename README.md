@@ -1,10 +1,8 @@
-
 ![Logo](src/assets/poll-hub-horizontal.png)
 
 > Not Ready for Production
 
-
-# Poll Hub 
+# Poll Hub
 
 A realtime polling application built using Svelte and Appwrite. It was created for a workshop for [Appwrite Developer Meetup Delhi](https://lu.ma/appwriteheroes-delhi23).
 
@@ -34,11 +32,10 @@ To run this project locally:
   npm install
   npm run dev
 ```
-    
+
 ## License
 
 This project is [MIT](https://choosealicense.com/licenses/mit/) licensed
-
 
 ## Generated Stuffs
 
@@ -86,6 +83,6 @@ If you have state that's important to retain within a component, consider creati
 ```ts
 // store.ts
 // An extremely simple external store
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 export default writable(0);
 ```

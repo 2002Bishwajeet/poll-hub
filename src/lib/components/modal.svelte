@@ -36,7 +36,6 @@
 		});
 		option = '';
 	}
-
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
@@ -51,7 +50,11 @@
 		<header class="modal-header">
 			<div class="u-flex u-main-space-between u-cross-center u-gap-16">
 				<h4 class="modal-title heading-level-5">New Option</h4>
-				<button class="button is-text is-small is-only-icon" on:click={() => dialog.close()} aria-label="Close modal">
+				<button
+					class="button is-text is-small is-only-icon"
+					on:click={() => dialog.close()}
+					aria-label="Close modal"
+				>
 					<span class="icon-x" aria-hidden="true" />
 				</button>
 			</div>
@@ -60,12 +63,7 @@
 			<ul class="form-list">
 				<li class="form-item">
 					<div class="input-text-wrapper">
-						   <InputText
-            id="name"
-            placeholder="Option"
-            bind:value={option}
-            autofocus
-            required />
+						<InputText id="name" placeholder="Option" bind:value={option} autofocus required />
 					</div>
 				</li>
 				{#if error}

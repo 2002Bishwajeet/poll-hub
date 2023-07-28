@@ -25,16 +25,12 @@
 				message: 'SignUp successful'
 			});
 			await authentication.login(mail, pass);
-			if($querystring)
-			{
+			if ($querystring) {
 				const redirect_uri = new URLSearchParams($querystring).get('redirect_uri');
 				replace(redirect_uri);
-			}
-			else
-			{
+			} else {
 				replace('/home');
 			}
-
 		} catch (error) {
 			addNotification({
 				type: 'error',
@@ -127,7 +123,7 @@
 					<span class="text"> Already have an account? </span>
 
 					<button class="is-text u-bold u-underline">
-						<a href={loginLink}  use:link class="text">Sign In</a>
+						<a href={loginLink} use:link class="text">Sign In</a>
 					</button>
 				</div>
 			</div>

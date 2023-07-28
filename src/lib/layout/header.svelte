@@ -42,7 +42,6 @@
 			message: 'Poll Stopped',
 			timeout: 2000
 		});
-
 	}
 
 	function logout() {
@@ -75,20 +74,20 @@
 
 <header class="main-header u-padding-inline-end-0">
 	<a class="logo" href="/home" use:link>
-		<img src={logo} alt="PollHub Logo"   height="60" />
+		<img src={logo} alt="PollHub Logo" height="60" />
 	</a>
 	<div class="main-header-end">
 		<nav class="u-flex u-gap-8">
 			{#if showStopButton}
-			<button class="button is-small is-secondary" on:click={share}>
-				<span class="text">Stop</span>
-			</button>
+				<button class="button is-small is-secondary" on:click={share}>
+					<span class="text">Stop</span>
+				</button>
 			{/if}
 			{#if showShareButton}
-			<button class="button is-small is-text" on:click={share}>
-				<span class="icon-share" aria-hidden="true" />
-				<span class="text">Share</span>
-			</button>
+				<button class="button is-small is-text" on:click={share}>
+					<span class="icon-share" aria-hidden="true" />
+					<span class="text">Share</span>
+				</button>
 			{/if}
 		</nav>
 		<nav class="u-flex u-height-100-percent u-sep-inline-start">

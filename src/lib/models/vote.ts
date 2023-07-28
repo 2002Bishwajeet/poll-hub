@@ -1,4 +1,4 @@
 export interface Vote {
-    id: string,
-    optionId: string,
+	id: string;
+	optionId: string;
 }

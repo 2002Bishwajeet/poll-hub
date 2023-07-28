@@ -1,29 +1,29 @@
 name: Tests
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: Use Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 18
-            # - name: Audit dependencies
-            #   run: npm audit --audit-level low
-            - name: Install dependencies
-              run: npm install
-            - name: Svelte Diagnostics
-              run: npm run check
-            - name: Linter
-              run: npm run lint
-            - name: Unit Tests
-              run: npm test
-            - name: Build Website
-              run: npm run build
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      # - name: Audit dependencies
+      #   run: npm audit --audit-level low
+      - name: Install dependencies
+        run: npm install
+      - name: Svelte Diagnostics
+        run: npm run check
+      - name: Linter
+        run: npm run lint
+      - name: Unit Tests
+        run: npm test
+      - name: Build Website
+        run: npm run build
