@@ -1,7 +1,5 @@
 ![Logo](src/assets/poll-hub-horizontal.png)
 
-> Not Ready for Production
-
 # Poll Hub
 
 A realtime polling application built using Svelte and Appwrite. It was created for a workshop for [Appwrite Developer Meetup Delhi](https://lu.ma/appwriteheroes-delhi23).
